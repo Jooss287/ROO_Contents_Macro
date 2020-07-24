@@ -18,10 +18,21 @@
 				<RowDefinition Height="15*" />
 				<RowDefinition Height="15*" />
 			</Grid.RowDefinitions>
-			<Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0">마우스 위치:</Label>
-			<TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="1">0,0</TextBox>
-			<Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="2">마우스 클릭 위치:</Label>
-			<TextBox Name="txt_mouse_click_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="3">0,0</TextBox>
+            <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0">마우스 위치:</Label>
+            <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="1">0, 0</TextBox>
+            <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="2">마우스 클릭 위치:</Label>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="30*" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="30*" />
+                    <ColumnDefinition Width="10*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Name="txt_mouse_click_posX" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="1">0</TextBox>
+                <TextBox Name="txt_mouse_click_posY" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="3">0</TextBox>
+            </Grid>
+            
 		</Grid>
 		<Grid Grid.Column="1">
 			<Grid.RowDefinitions>
@@ -29,7 +40,7 @@
 				<RowDefinition Height="20*" />
 			</Grid.RowDefinitions>
 			<Image Name="img_reference"  Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-			<Button Name="btn_start" Click="btn_start_Click" Grid.Row="1">시작하기</Button>
+			<Button Name="btn_start" Click="Btn_start_Click" Grid.Row="1">시작하기</Button>
 		</Grid>
 	</Grid>
 
