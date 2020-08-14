@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AppPlayer_autoClicker"
+        xmlns:emgu="clr-namespace:Emgu.CV.UI;assembly=Emgu.CV.Platform.NetFramework"
         mc:Ignorable="d"
         Title="Roo 자동 낚시" Height="227.565" Width="400">
 	<Grid>
@@ -39,8 +40,9 @@
 				<RowDefinition Height="80*" />
 				<RowDefinition Height="20*" />
 			</Grid.RowDefinitions>
-			<Image Name="img_reference"  Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-			<Button Name="btn_start" Click="Btn_start_Click" Grid.Row="1">시작하기</Button>
+            <Image x:Name="img_reference"  Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            
+            <Button Name="btn_start" Click="Btn_start_Click" Grid.Row="1">시작하기</Button>
 		</Grid>
 	</Grid>
 
