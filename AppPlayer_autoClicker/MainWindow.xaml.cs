@@ -17,6 +17,9 @@ using System.Threading;
 using System.Diagnostics;
 using System.Windows.Threading;
 
+using Emgu.CV;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace AppPlayer_autoClicker
 {
@@ -30,6 +33,20 @@ namespace AppPlayer_autoClicker
 
     public partial class MainWindow : Window
     {
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
+            
+            Mouse.Capture(this);
+            DispatcherTimer mousePosTimer = new DispatcherTimer();
+            mousePosTimer.Interval = TimeSpan.FromSeconds(0.05);
+            mousePosTimer.Tick += new EventHandler(MousePosCallBack);
+            mousePosTimer.Start();
+
+        }
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetCursorPos(ref Win32Point pt);
@@ -44,33 +61,20 @@ namespace AppPlayer_autoClicker
             public Int32 X;
             public Int32 Y;
         };
-        public static Point GetMousePosition()
+        public static System.Windows.Point GetMousePosition()
         {
             Win32Point w32Mouse = new Win32Point();
             GetCursorPos(ref w32Mouse);
-            return new Point(w32Mouse.X, w32Mouse.Y);
+            return new System.Windows.Point(w32Mouse.X, w32Mouse.Y);
         }
-
-        Point autoMouseClickPos;
-        Button button;
 
         private void MousePosCallBack(object sender, EventArgs e)
         {
-            Point pointToWindow = GetMousePosition();
+            System.Windows.Point pointToWindow = GetMousePosition();
             txt_mouse_pos.Text = pointToWindow.X.ToString() + ", " + pointToWindow.Y.ToString();
         }
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            Mouse.Capture(this);
-            DispatcherTimer mousePosTimer = new DispatcherTimer();
-            mousePosTimer.Interval = TimeSpan.FromSeconds(0.05);
-            mousePosTimer.Tick += new EventHandler(MousePosCallBack);
-            mousePosTimer.Start();
-            
-        }
-    private void Btn_start_Click(object sender, RoutedEventArgs e)
+        
+        private void Btn_start_Click(object sender, RoutedEventArgs e)
         {
             int mouseX = System.Convert.ToInt32(txt_mouse_click_posX.Text);
             int mouseY = System.Convert.ToInt32(txt_mouse_click_posY.Text);
@@ -79,7 +83,41 @@ namespace AppPlayer_autoClicker
             mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
         }
 
+        private BitmapImage CaptureWindow()
+        {
+            //int width = (int)SystemParameters.PrimaryScreenWidth;
+            //int height = (int)SystemParameters.PrimaryScreenHeight;
+            int width = 200;
+            int height = 200;
 
+            using (Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            {
+                using (Graphics gr = Graphics.FromImage(bmp))
+                {
+                    gr.CopyFromScreen(0, 0, 0, 0, bmp.Size);
+                }
+
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    bmp.Save(memory, ImageFormat.Bmp);
+                    memory.Position = 0;
+                    BitmapImage bitmapimage = new BitmapImage();
+                    bitmapimage.BeginInit();
+                    bitmapimage.StreamSource = memory;
+                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapimage.EndInit();
+
+                    return bitmapimage;
+                }
+            }
+        }
+
+        private void CheckSimilarity()
+        {
+            CaptureWindow();
+            //CvInvoke.MatchTemplate()
+            //CompareHist
+        }
     }
 
     
