@@ -64,6 +64,13 @@ namespace Emgu.CV
                 source.CopyPixels(Int32Rect.Empty, result.DataPointer, result.Step * result.Rows, result.Step);
                 return result;
             }
+            else if (source.Format == PixelFormats.Bgr32)
+            {
+                Mat result = new Mat();
+                result.Create(source.PixelHeight, source.PixelWidth, DepthType.Cv8U, 4);
+                source.CopyPixels(Int32Rect.Empty, result.DataPointer, result.Step * result.Rows, result.Step);
+                return result;
+            }
             else
             {
                 throw new Exception(String.Format("Convertion from BitmapSource of format {0} is not supported.", source.Format));

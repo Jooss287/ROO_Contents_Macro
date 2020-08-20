@@ -14,15 +14,17 @@
 		</Grid.ColumnDefinitions>
 		<Grid Grid.Column="0">
 			<Grid.RowDefinitions>
+                <RowDefinition Height="15*" />
 				<RowDefinition Height="15*" />
 				<RowDefinition Height="15*" />
 				<RowDefinition Height="15*" />
 				<RowDefinition Height="15*" />
 			</Grid.RowDefinitions>
-            <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0">마우스 위치:</Label>
-            <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="1">0, 0</TextBox>
-            <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="2">마우스 클릭 위치:</Label>
-            <Grid Grid.Row="3">
+            <Button Name="btn_sel_process" Content="앱플레이어 선택" Click="btn_sel_process_Click" />
+            <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1">마우스 위치:</Label>
+            <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2">0, 0</TextBox>
+            <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="3">마우스 클릭 위치:</Label>
+            <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10*" />
                     <ColumnDefinition Width="30*" />
