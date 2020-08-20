@@ -80,6 +80,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessInfobyMousePosition.cs" />
+    <Compile Include="ProcessInfobyMousePositionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
