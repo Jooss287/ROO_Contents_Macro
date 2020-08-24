@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:AppPlayer_autoClicker"
         xmlns:emgu="clr-namespace:Emgu.CV.UI;assembly=Emgu.CV.Platform.NetFramework"
         mc:Ignorable="d"
+        x:Name="mWindow"
         Title="Roo 자동 낚시" Height="227.565" Width="400">
-	<Grid>
+    <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="50*" />
 			<ColumnDefinition Width="50*" />
@@ -23,13 +24,15 @@
             <StackPanel Orientation="Vertical">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="0">LeftTop</Label>
-                    <TextBox x:Name="screen_lefttop_x" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="1"></TextBox>
-                    <TextBox x:Name="screen_lefttop_y" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
+                    <Label FontSize="4" HorizontalContentAlignment="Left" VerticalAlignment="Center" Grid.Column="0" MouseDoubleClick="Label_MouseDoubleClick">MakerInfo</Label>
+                    <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="1">LeftTop</Label>
+                    <TextBox x:Name="screen_lefttop_x" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
+                    <TextBox x:Name="screen_lefttop_y" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="3"></TextBox>
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>

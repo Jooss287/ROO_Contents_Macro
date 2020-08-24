@@ -21,6 +21,7 @@ using Emgu.CV;
 using System.IO;
 using System.Drawing.Imaging;
 using Emgu.CV.Dnn;
+using System.Runtime.CompilerServices;
 
 namespace AppPlayer_autoClicker
 {
@@ -35,6 +36,7 @@ namespace AppPlayer_autoClicker
     public partial class MainWindow : Window
     {
         readonly BitmapImage targetImage;
+        readonly BitmapImage targetImage1;
         ProcessInfobyMousePositionExtension ext = new ProcessInfobyMousePositionExtension();
         const int template_width = 156;
         const int template_height = 156;
@@ -45,7 +47,7 @@ namespace AppPlayer_autoClicker
         const int template_bottom_height = 25;
         const int template_top_height = 131;
 
-        bool threadloop = false;
+        public bool threadloop = false;
 
         System.Drawing.Point mouse_pos;
         System.Drawing.Point lefttop;
@@ -55,10 +57,13 @@ namespace AppPlayer_autoClicker
         {
             InitializeComponent();
 
+            mWindow.Title = "Roo 자동 낚시 (Ver.200825.00)";
             InitializeUserInterface();
 
-            targetImage = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
-            img_reference.Source = targetImage;
+            string filename = Environment.CurrentDirectory + "\\Resource\\targetImg.png";
+            targetImage = new BitmapImage(new Uri(filename, UriKind.Relative));
+            targetImage1 = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
+            img_reference.Source = targetImage1;
             
             Mouse.Capture(this);
             DispatcherTimer mousePosTimer = new DispatcherTimer();
@@ -69,12 +74,12 @@ namespace AppPlayer_autoClicker
 
         private void InitializeUserInterface()
         {
-            screen_lefttop_x.Text = "421";
-            screen_lefttop_y.Text = "222";
-            screen_rightbottom_x.Text = "1778";
-            screen_rightbottom_y.Text = "984";
-            txt_mouse_click_posX.Text = "1334";
-            txt_mouse_click_posY.Text = "680";
+            screen_lefttop_x.Text = "428";
+            screen_lefttop_y.Text = "100";
+            screen_rightbottom_x.Text = "1784";
+            screen_rightbottom_y.Text = "864";
+            txt_mouse_click_posX.Text = "1342";
+            txt_mouse_click_posY.Text = "559";
         }
         
         public static System.Windows.Point GetMousePosition()
@@ -99,15 +104,22 @@ namespace AppPlayer_autoClicker
         
         private void Btn_start_Click(object sender, RoutedEventArgs e)
         {
-            mouse_pos.X = System.Convert.ToInt32(txt_mouse_click_posX.Text);
-            mouse_pos.Y = System.Convert.ToInt32(txt_mouse_click_posY.Text);
-            lefttop = new System.Drawing.Point(Convert.ToInt32(screen_lefttop_x.Text), Convert.ToInt32(screen_lefttop_y.Text));
-            rightbottom = new System.Drawing.Point(Convert.ToInt32(screen_rightbottom_x.Text), Convert.ToInt32(screen_rightbottom_y.Text));
+            if (threadloop == false)
+            {
+                mouse_pos.X = System.Convert.ToInt32(txt_mouse_click_posX.Text);
+                mouse_pos.Y = System.Convert.ToInt32(txt_mouse_click_posY.Text);
+                lefttop = new System.Drawing.Point(Convert.ToInt32(screen_lefttop_x.Text), Convert.ToInt32(screen_lefttop_y.Text));
+                rightbottom = new System.Drawing.Point(Convert.ToInt32(screen_rightbottom_x.Text), Convert.ToInt32(screen_rightbottom_y.Text));
 
-            Thread t1 = new Thread(new ThreadStart(AutoFishing));
-            threadloop = true;
-            SetHook();
-            t1.Start();
+                Thread t1 = new Thread(new ThreadStart(AutoFishing));
+                threadloop = true;
+                SetHook();
+                t1.Start();
+            }
+            else
+            { 
+                threadloop = false;
+            }
 
             return;
         }
@@ -123,22 +135,30 @@ namespace AppPlayer_autoClicker
             double similarity;
             do
             {
-
+                if (!threadloop)
+                {
+                    UnHook();
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                    {
+                        btn_start.Content = "매크로 종료";
+                    }));
+                    return;
+                }
                 similarity = CheckSimilarity();
-                    Thread.Sleep(100);
-            } while (similarity > 300000);
+                Thread.Sleep(100);
+            } while (similarity > 2000000);
 
             SetCursorPos(mouse_pos.X, mouse_pos.Y);
             mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
             mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
 
             SetCursorPos(mouse_pos.X, mouse_pos.Y);
             mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
             mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             }
 
             UnHook();
@@ -193,17 +213,33 @@ namespace AppPlayer_autoClicker
             BitmapImage bmpImage = CaptureWindow(template_lefttop, template_rightbottom);
             Mat matCapture = BitmapSourceExtension.ToMat(bmpImage);
 
-            Mat targetResize = BitmapSourceExtension.ToMat(targetImage.Clone());
+            //BitmapImage temp = targetImage;
+            Mat targetResize = new Mat();
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+            {
+                targetResize = BitmapSourceExtension.ToMat(targetImage);
+            }));
+             
             CvInvoke.Resize(targetResize, targetResize, new System.Drawing.Size(template_rightbottom.X - template_lefttop.X, template_rightbottom.Y - template_lefttop.Y), 0, 0, Emgu.CV.CvEnum.Inter.Linear);
 
             matCapture.ConvertTo(matCapture, Emgu.CV.CvEnum.DepthType.Cv32F);
             targetResize.ConvertTo(targetResize, Emgu.CV.CvEnum.DepthType.Cv32F);
 
             double compareRatio = CvInvoke.CompareHist(targetResize, matCapture, Emgu.CV.CvEnum.HistogramCompMethod.Chisqr);
-            img_reference.Source = BitmapSourceExtension.ToBitmapSource(matCapture);
-            btn_start.Content = Convert.ToString(compareRatio);
+
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+            {
+                img_reference.Source = BitmapSourceExtension.ToBitmapSource(matCapture);
+                btn_start.Content = Convert.ToString(compareRatio);
+            }));
+
             return compareRatio;
             //CompareHist
+        }
+
+        public static void EndThread11()
+        {
+            
         }
 
         #region dll import
@@ -246,8 +282,8 @@ namespace AppPlayer_autoClicker
         static extern IntPtr LoadLibrary(string lpFileName);
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        const int WH_KEYBOARD_LL = 13; // Номер глобального LowLevel-хука на клавиатуру
-        const int WM_KEYDOWN = 0x100; // Сообщения нажатия клавиши
+        const int WH_KEYBOARD_LL = 13;
+        const int WM_KEYDOWN = 0x100;
 
         private LowLevelKeyboardProc _proc = hookProc;
 
@@ -262,15 +298,20 @@ namespace AppPlayer_autoClicker
             UnhookWindowsHookEx(hhook);
         }
 
+        public void EndThreadCmd()
+        {
+            threadloop = false;
+        }
+        private static Action NonStaticDelegate;
         public static IntPtr hookProc(int code, IntPtr wParam, IntPtr lParam)
         {
             if (code >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                //////ОБРАБОТКА НАЖАТИЯ
-                if (vkCode.ToString() == "256")
+                if (vkCode.ToString() == "118")
                 {
-                    MessageBox.Show("You pressed a CTR");
+                    MainWindow temp = new MainWindow();
+                    MainWindow.NonStaticDelegate = new Action(temp.EndThreadCmd);
                 }
                 return (IntPtr)1;
             }
@@ -278,6 +319,12 @@ namespace AppPlayer_autoClicker
                 return CallNextHookEx(hhook, code, (int)wParam, lParam);
         }
         #endregion
+
+        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("BCD 라이센스로 Opencv/EmguCV 사용. Made by Blurrr\n" +
+                "소스공개: https://github.com/Jooss287/Auto-clicker");
+        }
     }
 
 
