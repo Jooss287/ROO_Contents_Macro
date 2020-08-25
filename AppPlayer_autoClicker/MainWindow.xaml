@@ -31,8 +31,12 @@
                     </Grid.ColumnDefinitions>
                     <Label FontSize="4" HorizontalContentAlignment="Left" VerticalAlignment="Center" Grid.Column="0" MouseDoubleClick="Label_MouseDoubleClick">MakerInfo</Label>
                     <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="1">LeftTop</Label>
-                    <TextBox x:Name="screen_lefttop_x" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
-                    <TextBox x:Name="screen_lefttop_y" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="3"></TextBox>
+                    <TextBox x:Name="screen_lefttop_x" 
+                             GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
+                    <TextBox x:Name="screen_lefttop_y" 
+                             GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="3"></TextBox>
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -41,13 +45,17 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="0">RightBottom</Label>
-                    <TextBox x:Name="screen_rightbottom_x" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="1"></TextBox>
-                    <TextBox x:Name="screen_rightbottom_y" HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
+                    <TextBox x:Name="screen_rightbottom_x" 
+                             GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="1"></TextBox>
+                    <TextBox x:Name="screen_rightbottom_y" 
+                             GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
                 </Grid>
             </StackPanel>
            
             <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1">마우스 위치:</Label>
-            <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2">0, 0</TextBox>
+            <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" IsEnabled="False">0, 0</TextBox>
             <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="3">마우스 클릭 위치:</Label>
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
@@ -57,8 +65,12 @@
                     <ColumnDefinition Width="30*" />
                     <ColumnDefinition Width="10*" />
                 </Grid.ColumnDefinitions>
-                <TextBox Name="txt_mouse_click_posX" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="1"></TextBox>
-                <TextBox Name="txt_mouse_click_posY" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="3"></TextBox>
+                <TextBox Name="txt_mouse_click_posX" 
+                         GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                         FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="1"></TextBox>
+                <TextBox Name="txt_mouse_click_posY" 
+                         GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
+                         FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="3"></TextBox>
             </Grid>
             
 		</Grid>

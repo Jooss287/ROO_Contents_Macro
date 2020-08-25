@@ -1,27 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Diagnostics;
 using System.Windows.Threading;
+using System.Text.RegularExpressions;
 
 using Emgu.CV;
 using System.IO;
 using System.Drawing.Imaging;
-using Emgu.CV.Dnn;
-using System.Runtime.CompilerServices;
 
 namespace AppPlayer_autoClicker
 {
@@ -53,11 +43,16 @@ namespace AppPlayer_autoClicker
         System.Drawing.Point lefttop;
         System.Drawing.Point rightbottom;
 
+        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("BCD 라이센스로 Opencv/EmguCV 사용. Made by Blurrr\n" +
+                "소스공개: https://github.com/Jooss287/Auto-clicker");
+        }
         public MainWindow()
         {
             InitializeComponent();
 
-            mWindow.Title = "Roo 자동 낚시 (Ver.200825.00)";
+            mWindow.Title = "Roo 자동 낚시 (Ver.200825.01)";
             InitializeUserInterface();
 
             string filename = Environment.CurrentDirectory + "\\Resource\\targetImg.png";
@@ -74,12 +69,12 @@ namespace AppPlayer_autoClicker
 
         private void InitializeUserInterface()
         {
-            screen_lefttop_x.Text = "428";
-            screen_lefttop_y.Text = "100";
-            screen_rightbottom_x.Text = "1784";
-            screen_rightbottom_y.Text = "864";
-            txt_mouse_click_posX.Text = "1342";
-            txt_mouse_click_posY.Text = "559";
+            screen_lefttop_x.Text = "389";
+            screen_lefttop_y.Text = "181";
+            screen_rightbottom_x.Text = "1919";
+            screen_rightbottom_y.Text = "1039";
+            txt_mouse_click_posX.Text = "1484";
+            txt_mouse_click_posY.Text = "693";
         }
         
         public static System.Windows.Point GetMousePosition()
@@ -99,7 +94,6 @@ namespace AppPlayer_autoClicker
             System.Windows.Point pointToWindow = GetMousePosition();
             ext.SetPositon(Convert.ToInt32(pointToWindow.X), Convert.ToInt32(pointToWindow.Y));
             ext.GetFocusRect();
-            //btn_sel_process.Content = Convert.ToString(ext.handleRect.Left) +','+ Convert.ToString(ext.handleRect.Top) ;
         }
         
         private void Btn_start_Click(object sender, RoutedEventArgs e)
@@ -127,38 +121,47 @@ namespace AppPlayer_autoClicker
         void AutoFishing()
         {
             while(threadloop)
-            { 
-            SetCursorPos(mouse_pos.X, mouse_pos.Y);
-            mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
-            mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
-
-            double similarity;
-            do
             {
-                if (!threadloop)
+                double default_sim = 0.0;
+                for (int i = 0; i < 5; i++)
                 {
-                    UnHook();
-                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-                    {
-                        btn_start.Content = "매크로 종료";
-                    }));
-                    return;
+                    default_sim += CheckSimilarity();
+                    Thread.Sleep(100);
                 }
-                similarity = CheckSimilarity();
-                Thread.Sleep(100);
-            } while (similarity > 2000000);
+                default_sim = default_sim / 5;
 
-            SetCursorPos(mouse_pos.X, mouse_pos.Y);
-            mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
-            mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
 
-            Thread.Sleep(2000);
+                SetCursorPos(mouse_pos.X, mouse_pos.Y);
+                mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
+                mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
 
-            SetCursorPos(mouse_pos.X, mouse_pos.Y);
-            mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
-            mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
+                double similarity;
+                do
+                {
+                    if (!threadloop)
+                    {
+                        UnHook();
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+                        {
+                            btn_start.Content = "매크로 종료";
+                        }));
+                        return;
+                    }
+                    similarity = CheckSimilarity();
+                    Thread.Sleep(100);
+                } while (similarity > default_sim*0.8);
 
-            Thread.Sleep(2000);
+                SetCursorPos(mouse_pos.X, mouse_pos.Y);
+                mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
+                mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
+
+                Thread.Sleep(2000);
+
+                SetCursorPos(mouse_pos.X, mouse_pos.Y);
+                mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
+                mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
+
+                Thread.Sleep(200);
             }
 
             UnHook();
@@ -224,23 +227,29 @@ namespace AppPlayer_autoClicker
 
             matCapture.ConvertTo(matCapture, Emgu.CV.CvEnum.DepthType.Cv32F);
             targetResize.ConvertTo(targetResize, Emgu.CV.CvEnum.DepthType.Cv32F);
+            
+            //for ( int i = 0; i < matCapture.Rows; i++)
+            //{
+            //    for ( int j = 0; j < matCapture.Cols; j++)
+            //    {
+            //        MatExtension.SetValue(matCapture, i, j, 0);
+            //        MatExtension.SetValue(targetResize, i, j, 0);
+            //    }
+            //}
+
 
             double compareRatio = CvInvoke.CompareHist(targetResize, matCapture, Emgu.CV.CvEnum.HistogramCompMethod.Chisqr);
 
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
             {
                 img_reference.Source = BitmapSourceExtension.ToBitmapSource(matCapture);
-                btn_start.Content = Convert.ToString(compareRatio);
+                btn_start.Content = Convert.ToString(Convert.ToInt32(compareRatio));
             }));
 
             return compareRatio;
             //CompareHist
         }
 
-        public static void EndThread11()
-        {
-            
-        }
 
         #region dll import
         [DllImport("user32.dll")]
@@ -312,18 +321,38 @@ namespace AppPlayer_autoClicker
                 {
                     MainWindow temp = new MainWindow();
                     MainWindow.NonStaticDelegate = new Action(temp.EndThreadCmd);
+                    return (IntPtr)1;
                 }
-                return (IntPtr)1;
+                else
+                    return CallNextHookEx(hhook, code, (int)wParam, lParam);
             }
             else
                 return CallNextHookEx(hhook, code, (int)wParam, lParam);
         }
         #endregion
 
-        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        
+
+        public bool IsNumeric(string source)
         {
-            MessageBox.Show("BCD 라이센스로 Opencv/EmguCV 사용. Made by Blurrr\n" +
-                "소스공개: https://github.com/Jooss287/Auto-clicker");
+            Regex regex = new Regex("[^0-9.-]+");
+            return !regex.IsMatch(source);
+        }
+        private void NurmericCheckFunc(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsNumeric(e.Text);
+        }
+        private void TxtboxSelectAll(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.CurrentDispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(
+                    delegate
+                    {
+                        (sender as TextBox).SelectAll();
+                    }
+                )
+            );
         }
     }
 
