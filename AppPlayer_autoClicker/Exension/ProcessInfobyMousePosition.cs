@@ -18,7 +18,6 @@ namespace AppPlayer_autoClicker
         public string _processname;
         public string _windowtext;
         public string _classname;
-        public Rect _windowrect;
         #endregion
 
         #region public method
