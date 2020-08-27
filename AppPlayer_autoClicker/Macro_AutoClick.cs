@@ -13,8 +13,11 @@ using wPoint = System.Drawing.Point;
 
 namespace AppPlayer_autoClicker
 {
+    
     class Macro_AutoClick
     {
+        const int CLICK_THRESHOLD = 1000000;
+
         #region dll import
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -142,8 +145,15 @@ namespace AppPlayer_autoClicker
                 MouseClick();
                 
                 double similarity;
+                int timecheck = 0;
                 do
                 {
+                    if (timecheck >= 140)
+                    {
+                        MouseClick();
+                        timecheck = 0;
+                    }
+                        
                     if (!ThreadLoop)
                     {
                         Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
@@ -154,7 +164,8 @@ namespace AppPlayer_autoClicker
                     }
                     similarity = CheckSimilarity(ref refImg);
                     Thread.Sleep(50);
-                } while (similarity > -11);
+                    timecheck++;
+                } while (similarity < CLICK_THRESHOLD);
 
                 MouseClick();
                 Thread.Sleep(2000);

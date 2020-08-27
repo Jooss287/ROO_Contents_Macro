@@ -21,7 +21,6 @@ namespace AppPlayer_autoClicker
 
     public partial class MainWindow : Window
     {
-        readonly BitmapImage targetImage;
         public bool threadloop = false;
         Macro_AutoClick mac;
 
@@ -34,7 +33,7 @@ namespace AppPlayer_autoClicker
         {
             InitializeComponent();
 
-            mWindow.Title = "Roo 자동 낚시 (Ver.200825.01)";
+            mWindow.Title = "Roo 자동 낚시 (Ver.200827.00)";
             InitializeUserInterface();
 
             img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
@@ -48,12 +47,12 @@ namespace AppPlayer_autoClicker
 
         private void InitializeUserInterface()
         {
-            screen_lefttop_x.Text = "389";
-            screen_lefttop_y.Text = "181";
+            screen_lefttop_x.Text = "392";
+            screen_lefttop_y.Text = "179";
             screen_rightbottom_x.Text = "1919";
             screen_rightbottom_y.Text = "1039";
-            txt_mouse_click_posX.Text = "1484";
-            txt_mouse_click_posY.Text = "693";
+            txt_mouse_click_posX.Text = "1422";
+            txt_mouse_click_posY.Text = "694";
         }
         
         
