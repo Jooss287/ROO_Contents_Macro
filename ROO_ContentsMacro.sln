@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppPlayer_autoClicker", "AppPlayer_autoClicker\AppPlayer_autoClicker.csproj", "{652C3F06-385F-47CE-8917-0896C9FA8E98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingContents", "FishingContents\FishingContents.csproj", "{652C3F06-385F-47CE-8917-0896C9FA8E98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

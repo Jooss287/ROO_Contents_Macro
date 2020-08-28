@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 using wPoint = System.Drawing.Point;
 
-namespace AppPlayer_autoClicker
+namespace FishingContents
 {
     [Flags]
     public enum MouseFlag
