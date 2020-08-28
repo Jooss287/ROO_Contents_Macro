@@ -21,6 +21,8 @@ namespace FishingContents
 
     public partial class MainWindow : Window
     {
+        const string ProgramVersion = "1.0";
+
         public bool threadloop = false;
         Macro_AutoClick mac;
 
@@ -33,7 +35,7 @@ namespace FishingContents
         {
             InitializeComponent();
 
-            mWindow.Title = "Roo 자동 낚시 (Ver.200827.00)";
+            mWindow.Title = "Roo Fishing Macro (Ver." + ProgramVersion + ")";
             InitializeUserInterface();
 
             img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
@@ -47,12 +49,21 @@ namespace FishingContents
 
         private void InitializeUserInterface()
         {
+            screen_lefttop_x.Text = "0";
+            screen_lefttop_y.Text = "0";
+            screen_rightbottom_x.Text = "0";
+            screen_rightbottom_y.Text = "0";
+            txt_mouse_click_posX.Text = "0";
+            txt_mouse_click_posY.Text = "0";
+
+#if DEBUG
             screen_lefttop_x.Text = "392";
             screen_lefttop_y.Text = "179";
             screen_rightbottom_x.Text = "1919";
             screen_rightbottom_y.Text = "1039";
             txt_mouse_click_posX.Text = "1422";
             txt_mouse_click_posY.Text = "694";
+#endif
         }
         
         
