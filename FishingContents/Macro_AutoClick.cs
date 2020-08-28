@@ -11,7 +11,7 @@ using System.Windows;
 
 using wPoint = System.Drawing.Point;
 
-namespace AppPlayer_autoClicker
+namespace FishingContents
 {
     
     class Macro_AutoClick

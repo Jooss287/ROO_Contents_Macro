@@ -7,7 +7,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using System.Runtime.InteropServices;
 
-namespace AppPlayer_autoClicker
+namespace FishingContents
 {
     public static class MatExtension
     {

@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Drawing;
 
-namespace AppPlayer_autoClicker
+namespace FishingContents
 {
     class ProcessInfobyMousePosition
     {
