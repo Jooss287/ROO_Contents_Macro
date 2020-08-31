@@ -3,11 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 
 using wPoint = System.Drawing.Point;
+using FishingContents.VersionCheck;
+using System.Threading;
 
 namespace FishingContents
 {
@@ -21,32 +22,21 @@ namespace FishingContents
 
     public partial class MainWindow : Window
     {
-        const string ProgramVersion = "1.0";
-
         public bool threadloop = false;
         Macro_AutoClick mac;
 
-        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            MessageBox.Show("BCD 라이센스로 Opencv/EmguCV 사용. Made by Blurrr\n" +
-                "소스공개: https://github.com/Jooss287/Auto-clicker");
-        }
         public MainWindow()
         {
             InitializeComponent();
+            VersionCheck();
 
-            mWindow.Title = "Roo Fishing Macro (Ver." + ProgramVersion + ")";
+            mWindow.Title = "Roo Fishing Macro (" + ProgramVersion.Ver + ")";
             InitializeUserInterface();
 
             img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
-            
-            Mouse.Capture(this);
-            DispatcherTimer mousePosTimer = new DispatcherTimer();
-            mousePosTimer.Interval = TimeSpan.FromSeconds(0.05);
-            mousePosTimer.Tick += new EventHandler(MousePosCallBack);
-            mousePosTimer.Start();
         }
 
+        #region Initialize
         private void InitializeUserInterface()
         {
             screen_lefttop_x.Text = "0";
@@ -65,8 +55,40 @@ namespace FishingContents
             txt_mouse_click_posY.Text = "694";
 #endif
         }
-        
-        
+
+        private void SetMousePosTimer()
+        {
+            Mouse.Capture(this);
+            DispatcherTimer mousePosTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromSeconds(0.05),
+            };
+            mousePosTimer.Tick += new EventHandler(MousePosCallBack);
+            mousePosTimer.Start();
+        }
+
+        private void VersionCheck()
+        {
+            if (ProgramVersion.IsLastestVer())
+                return;
+
+            MessageBoxResult MsgRes = MessageBox.Show("최신 버전이 아닙니다.최신 버전을 다운받으시겠습니까?", "VersionCheck", MessageBoxButton.YesNo);
+            if (MsgRes == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start(ProgramVersion.GetLeastURL());
+                this.Close();
+            }
+            //Thread t1 = new Thread(delegate ()
+            //{
+                
+            //    return;
+            //});
+            //t1.Start();
+            
+        }
+        #endregion
+
+
 
         #region CallBack
         private void MousePosCallBack(object sender, EventArgs e)
@@ -95,59 +117,9 @@ namespace FishingContents
             }
             return;
         }
-        #endregion
-
-        #region keyboard hook
-        [DllImport("user32.dll")]
-        static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc callback, IntPtr hInstance, uint threadId);
-
-        [DllImport("user32.dll")]
-        static extern bool UnhookWindowsHookEx(IntPtr hInstance);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, int wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr LoadLibrary(string lpFileName);
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        const int WH_KEYBOARD_LL = 13;
-        const int WM_KEYDOWN = 0x100;
-
-        private LowLevelKeyboardProc _proc = hookProc;
-
-        private static IntPtr hhook = IntPtr.Zero;
-        public void SetHook()
+        private void Label_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            IntPtr hInstance = LoadLibrary("User32");
-            hhook = SetWindowsHookEx(WH_KEYBOARD_LL, _proc, hInstance, 0);
-        }
-        public static void UnHook()
-        {
-            UnhookWindowsHookEx(hhook);
-        }
-
-        public void EndThreadCmd()
-        {
-            threadloop = false;
-        }
-        private static Action NonStaticDelegate;
-        public static IntPtr hookProc(int code, IntPtr wParam, IntPtr lParam)
-        {
-            if (code >= 0 && wParam == (IntPtr)WM_KEYDOWN)
-            {
-                int vkCode = Marshal.ReadInt32(lParam);
-                if (vkCode.ToString() == "118")
-                {
-                    MainWindow temp = new MainWindow();
-                    MainWindow.NonStaticDelegate = new Action(temp.EndThreadCmd);
-                    return (IntPtr)1;
-                }
-                else
-                    return CallNextHookEx(hhook, code, (int)wParam, lParam);
-            }
-            else
-                return CallNextHookEx(hhook, code, (int)wParam, lParam);
+            MessageBox.Show(ProgramVersion.CopyRight());
         }
         #endregion
 
