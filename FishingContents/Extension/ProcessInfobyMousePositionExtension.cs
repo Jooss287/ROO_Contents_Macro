@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows;
 
-namespace FishingContents
+namespace FishingContents.Extension
 {
     class ProcessInfobyMousePositionExtension : ProcessInfobyMousePosition
     {

@@ -7,7 +7,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using System.Runtime.InteropServices;
 
-namespace FishingContents
+namespace Emgu.CV
 {
     public static class MatExtension
     {
