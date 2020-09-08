@@ -4,6 +4,9 @@
 ![](Image/header.jpg)
 
 ## 최신 버전 다운로드
+* 0.1.1- [Download](https://github.com/Jooss287/ROO_Contents_Macro/releases/tag/v1.1)
+    * 버전 체크 기능 추가
+
 * 0.1.0- [Download](https://github.com/Jooss287/ROO_Contents_Macro/releases/tag/v1.0)
     * First Release
 
