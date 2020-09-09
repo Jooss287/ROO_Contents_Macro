@@ -34,6 +34,8 @@ namespace FishingContents
             InitializeUserInterface();
 
             img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
+
+            SetMousePosTimer();
         }
 
         #region Initialize

@@ -169,7 +169,8 @@ namespace FishingContents
 
                 MouseClick();
                 Thread.Sleep(2000);
-
+                
+                //screenshot
                 MouseClick();
                 Thread.Sleep(200);
             }
