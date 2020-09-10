@@ -102,7 +102,7 @@ namespace FishingContents
                 wPoint rightbottom = new wPoint(Convert.ToInt32(screen_rightbottom_x.Text), Convert.ToInt32(screen_rightbottom_y.Text));
 
                 mac = new Macro_AutoClick(mouse_pos, lefttop, rightbottom);
-                mac.IsScreenShotEnabled = isScreenShot.IsEnabled;
+                mac.IsScreenShotEnabled = Convert.ToBoolean(isScreenShot.IsChecked);
                 mac.StartThread();
                 threadloop = true;
             }
