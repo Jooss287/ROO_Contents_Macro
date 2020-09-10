@@ -10,16 +10,13 @@ using System.Windows.Threading;
 using System.Windows;
 
 using wPoint = System.Drawing.Point;
+using Emgu.CV.Util;
 
 namespace FishingContents
 {
     
     class Macro_AutoClick
     {
-        const int CLICK_THRESHOLD = 1000000;
-        readonly wPoint appPlayerLT;
-        readonly wPoint appPlayerRB;
-
         #region dll import
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -36,11 +33,17 @@ namespace FishingContents
             public Int32 Y;
         };
         #endregion
+
+        const int CLICK_THRESHOLD = 1000000;
+        readonly wPoint appPlayerLT;
+        readonly wPoint appPlayerRB;
         readonly wPoint mouse_pos;
         private wPoint capLT;
         private wPoint capRB;
         private Thread macroThread;
         private bool ThreadLoop;
+        private bool _IsScreenShotEnabled = false;
+
         public Macro_AutoClick(wPoint param_mouse_pos, wPoint param_screenLT, wPoint param_screenRB)
         {
             mouse_pos = param_mouse_pos;
@@ -49,8 +52,8 @@ namespace FishingContents
             CalcTargetSize(param_screenLT, param_screenRB);
             ThreadLoop = false;
         }
-        
-            
+
+        #region Mouse, Capture Funcs
         private BitmapImage CaptureWindow(System.Drawing.Point lefttop, System.Drawing.Point rightbottom)
         {
             //int width = (int)SystemParameters.PrimaryScreenWidth;
@@ -79,18 +82,46 @@ namespace FishingContents
                 }
             }
         }
+
         public static System.Windows.Point GetMousePosition()
         {
             Win32Point w32Mouse = new Win32Point();
             GetCursorPos(ref w32Mouse);
             return new System.Windows.Point(w32Mouse.X, w32Mouse.Y);
         }
+
         private void MouseClick()
         {
             SetCursorPos(mouse_pos.X, mouse_pos.Y);
             mouse_event((int)MouseFlag.ME_LEFTDOWN, mouse_pos.X, mouse_pos.Y, 0, 0);
             mouse_event((int)MouseFlag.ME_LEFTUP, 0, 0, 0, 0);
         }
+
+        public void ScreenCapture()
+        {
+            if (!_IsScreenShotEnabled)
+                return;
+
+            BitmapImage bmpImage = CaptureWindow(appPlayerLT, appPlayerRB);
+            Mat matCapture = BitmapSourceExtension.ToMat(bmpImage);
+
+            string savePath = "SaveImage";
+            string saveName = "ScreenShot";
+            string saveExt = "jpg";
+
+            string fileName = SaveFileName(savePath, saveName, saveExt);
+            CheckFolder(savePath);
+            matCapture.Save(fileName);
+        }
+        
+        public bool IsScreenShotEnabled
+        {
+            get { return _IsScreenShotEnabled; }
+            set { _IsScreenShotEnabled = value; }
+        }
+        #endregion
+
+        #region inner calc funcs
         private void CalcTargetSize(wPoint param_screenLT, wPoint param_screenRB)
         {
             const int template_width = 156;
@@ -127,6 +158,23 @@ namespace FishingContents
             return matCapture;
         }
 
+        private double CheckSimilarity(ref Mat refStateImg)
+        {
+            Mat tempImg = CaptureMatWindow();
+
+            double compareRatio = CvInvoke.CompareHist(refStateImg, tempImg, Emgu.CV.CvEnum.HistogramCompMethod.Chisqr);
+
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
+            {
+                ((MainWindow)Application.Current.MainWindow).img_reference.Source = BitmapSourceExtension.ToBitmapSource(tempImg);
+                ((MainWindow)Application.Current.MainWindow).btn_start.Content = Convert.ToString(Convert.ToInt32(compareRatio));
+            }));
+
+            return compareRatio;
+        }
+        #endregion
+
+        #region Thread
         public void StartThread()
         {
             if (ThreadLoop)
@@ -180,35 +228,7 @@ namespace FishingContents
             }
             return;
         }
-        private double CheckSimilarity(ref Mat refStateImg)
-        {
-            Mat tempImg = CaptureMatWindow();
-            
-            double compareRatio = CvInvoke.CompareHist(refStateImg, tempImg, Emgu.CV.CvEnum.HistogramCompMethod.Chisqr);
-
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
-            {
-                ((MainWindow)Application.Current.MainWindow).img_reference.Source = BitmapSourceExtension.ToBitmapSource(tempImg);
-                ((MainWindow)Application.Current.MainWindow).btn_start.Content = Convert.ToString(Convert.ToInt32(compareRatio));
-            }));
-
-            return compareRatio;
-        }
-
-        public void ScreenCapture()
-        {
-            BitmapImage bmpImage = CaptureWindow(appPlayerLT, appPlayerRB);
-            Mat matCapture = BitmapSourceExtension.ToMat(bmpImage);
-            //matCapture.ConvertTo(matCapture, Emgu.CV.CvEnum.DepthType.Cv32F);
-
-            string savePath = "SaveImage";
-            string saveName = "ScreenShot";
-            string saveExt = "jpg";
-
-            string fileName = SaveFileName(savePath, saveName, saveExt);
-            CheckFolder(savePath);
-            matCapture.Save(fileName);
-        }
+        #endregion
 
         #region file save
         private string SaveFileName(string saveFolder, string baseFileName, string fileExt)

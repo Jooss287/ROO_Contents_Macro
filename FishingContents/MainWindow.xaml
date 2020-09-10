@@ -9,18 +9,11 @@
         x:Name="mWindow"
         Title="Roo 자동 낚시" Height="227.565" Width="400">
     <Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="50*" />
-			<ColumnDefinition Width="50*" />
-		</Grid.ColumnDefinitions>
-		<Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="15*" />
-                <RowDefinition Height="15*" />
-                <RowDefinition Height="15*" />
-                <RowDefinition Height="15*" />
-                <RowDefinition Height="15*" />
-            </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*" />
+            <ColumnDefinition Width="50*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -29,14 +22,23 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Label FontSize="4" HorizontalContentAlignment="Left" VerticalAlignment="Center" Grid.Column="0" MouseDoubleClick="Label_MouseDoubleClick">MakerInfo</Label>
-                    <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="1">LeftTop</Label>
+                    <Label FontSize="4" 
+                           HorizontalContentAlignment="Left" VerticalAlignment="Center" 
+                           Grid.Column="0" 
+                           MouseDoubleClick="Label_MouseDoubleClick"
+                           Content="MakerInfo"/>
+                    <Label FontSize="8"
+                           HorizontalContentAlignment="Right" VerticalAlignment="Center"
+                           Grid.Column="1"
+                           Content="LeftTop"/>
                     <TextBox x:Name="screen_lefttop_x" 
                              GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
-                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                             Grid.Column="2"/>
                     <TextBox x:Name="screen_lefttop_y" 
                              GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
-                             HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="3"></TextBox>
+                             HorizontalContentAlignment="Center" VerticalAlignment="Center"
+                             Grid.Column="3"/>
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -44,7 +46,10 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Label FontSize="8" HorizontalContentAlignment="Right" VerticalAlignment="Center" Grid.Column="0">RightBottom</Label>
+                    <Label FontSize="8"
+                           HorizontalContentAlignment="Right" VerticalAlignment="Center"
+                           Grid.Column="0"
+                           Content="RightBottom"/>
                     <TextBox x:Name="screen_rightbottom_x" 
                              GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
                              HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="1"></TextBox>
@@ -53,7 +58,12 @@
                              HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
                 </Grid>
             </StackPanel>
-           
+            <CheckBox x:Name="isScreenShot" 
+                      Content="AutoScreenShot" FontSize="9"
+                      Margin="0,0,5,0"
+                      VerticalContentAlignment="Center"
+                      VerticalAlignment="Center" HorizontalAlignment="Right"/>
+
             <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1">마우스 위치:</Label>
             <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" IsEnabled="False">0, 0</TextBox>
             <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="3">마우스 클릭 위치:</Label>
@@ -72,8 +82,8 @@
                          GotFocus="TxtboxSelectAll" PreviewTextInput="NurmericCheckFunc"
                          FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Column="3"></TextBox>
             </Grid>
+        </StackPanel>
             
-		</Grid>
 		<Grid Grid.Column="1">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="80*" />
