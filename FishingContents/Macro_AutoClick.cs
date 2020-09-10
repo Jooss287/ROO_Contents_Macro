@@ -17,6 +17,8 @@ namespace FishingContents
     class Macro_AutoClick
     {
         const int CLICK_THRESHOLD = 1000000;
+        readonly wPoint appPlayerLT;
+        readonly wPoint appPlayerRB;
 
         #region dll import
         [DllImport("user32.dll")]
@@ -42,6 +44,8 @@ namespace FishingContents
         public Macro_AutoClick(wPoint param_mouse_pos, wPoint param_screenLT, wPoint param_screenRB)
         {
             mouse_pos = param_mouse_pos;
+            appPlayerLT = param_screenLT;
+            appPlayerRB = param_screenRB;
             CalcTargetSize(param_screenLT, param_screenRB);
             ThreadLoop = false;
         }
@@ -169,8 +173,8 @@ namespace FishingContents
 
                 MouseClick();
                 Thread.Sleep(2000);
-                
-                //screenshot
+
+                ScreenCapture();
                 MouseClick();
                 Thread.Sleep(200);
             }
@@ -190,5 +194,46 @@ namespace FishingContents
 
             return compareRatio;
         }
+
+        public void ScreenCapture()
+        {
+            BitmapImage bmpImage = CaptureWindow(appPlayerLT, appPlayerRB);
+            Mat matCapture = BitmapSourceExtension.ToMat(bmpImage);
+            //matCapture.ConvertTo(matCapture, Emgu.CV.CvEnum.DepthType.Cv32F);
+
+            string savePath = "SaveImage";
+            string saveName = "ScreenShot";
+            string saveExt = "jpg";
+
+            string fileName = SaveFileName(savePath, saveName, saveExt);
+            CheckFolder(savePath);
+            matCapture.Save(fileName);
+        }
+
+        #region file save
+        private string SaveFileName(string saveFolder, string baseFileName, string fileExt)
+        {
+            if (saveFolder == "") saveFolder = Environment.CurrentDirectory;   // 실행파일위치로 변경
+            string today = String.Format(DateTime.Now.ToString("yyyyMMdd"));   // 오늘날짜 입력 21080101
+            baseFileName = today + baseFileName;
+
+            FileInfo fi = new FileInfo(saveFolder + "\\" + baseFileName + "_001" + "." + fileExt);   // 실행파일위치 + 오늘날짜 + 순번(001)
+            string tmpPath = "";
+            int i = 1;   // 순번 증가
+            while (fi.Exists)   // 파일이 있으면 계속 반복 (순번 증가)
+            {
+                tmpPath = saveFolder + "\\" + baseFileName + (++i).ToString("_000") + "." + fileExt;   // ex) basefileName_001.fileExt
+                fi = new FileInfo(tmpPath);
+            }
+            tmpPath = saveFolder + "\\" + baseFileName + i.ToString("_000") + "." + fileExt;   // ex) basefileName_001.fileExt
+            return tmpPath;
+        }
+        
+        private void CheckFolder(string savePath)
+        {
+            DirectoryInfo di = new DirectoryInfo(savePath);
+            if (!di.Exists) di.Create();
+        }
+        #endregion
     }
 }

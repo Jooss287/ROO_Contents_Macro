@@ -6,7 +6,7 @@ namespace FishingContents.VersionCheck
 {
     class ProgramVersion
     {
-        private const string _PROGRAM_VER = "v1.1";
+        private const string _PROGRAM_VER = "v1.2";
         private const string LATEST_VER_API_URL = "https://api.github.com/repos/Jooss287/ROO_Contents_Macro/releases/latest";
 
         public static string Ver

@@ -80,13 +80,6 @@ namespace FishingContents
                 System.Diagnostics.Process.Start(ProgramVersion.GetLeastURL());
                 this.Close();
             }
-            //Thread t1 = new Thread(delegate ()
-            //{
-                
-            //    return;
-            //});
-            //t1.Start();
-            
         }
         #endregion
 
