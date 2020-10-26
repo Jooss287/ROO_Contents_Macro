@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 using wPoint = System.Drawing.Point;
 using FishingContents.VersionCheck;
-using System.Threading;
+using System.Collections.Generic;
 
 namespace FishingContents
 {
@@ -19,11 +19,18 @@ namespace FishingContents
         ME_RIGHTUP = 0x10, ME_MIDDLEDOWN = 0x20, ME_MIDDLEUP = 0x40,
         ME_WHEEL = 0x800, ME_ABSOULUTE = 8000
     }
+    public enum PointList : int
+    {
+        LEFTTOP,
+        RIGHTBOTTOM,
+        CLICKPOS
+    }
 
     public partial class MainWindow : Window
     {
         public bool threadloop = false;
         Macro_AutoClick mac;
+        int SavePoint { get; set; }
 
         public MainWindow()
         {
@@ -31,33 +38,36 @@ namespace FishingContents
             VersionCheck();
 
             mWindow.Title = "Roo Fishing Macro (" + ProgramVersion.Ver + ")";
-            InitializeUserInterface();
+            
+            InitSavePoint();
+            LoadPoints(Properties.Settings.Default.set_point[0]);
 
             img_reference.Source = new BitmapImage(new Uri("Resource/targetImg.png", UriKind.Relative));
 
             SetMousePosTimer();
+
         }
 
         #region Initialize
-        private void InitializeUserInterface()
+        void InitSavePoint()
         {
-            screen_lefttop_x.Text = "0";
-            screen_lefttop_y.Text = "0";
-            screen_rightbottom_x.Text = "0";
-            screen_rightbottom_y.Text = "0";
-            txt_mouse_click_posX.Text = "0";
-            txt_mouse_click_posY.Text = "0";
-
-#if DEBUG
-            screen_lefttop_x.Text = "392";
-            screen_lefttop_y.Text = "179";
-            screen_rightbottom_x.Text = "1919";
-            screen_rightbottom_y.Text = "1039";
-            txt_mouse_click_posX.Text = "1422";
-            txt_mouse_click_posY.Text = "694";
-#endif
+            if ( Properties.Settings.Default.set_point == null)
+            {
+                List<List<Point>> save_point = new List<List<Point>>();
+                for ( int i = 0;i < 4; i++)
+                {
+                    Point left_top = new Point(0, 0);
+                    Point right_bottom = new Point(0, 0);
+                    Point click_pos = new Point(0, 0);
+                    List<Point> points = new List<Point>();
+                    points.Add(left_top);
+                    points.Add(right_bottom);
+                    points.Add(click_pos);
+                    save_point.Add(points);
+                }
+                Properties.Settings.Default.set_point = save_point;
+            }
         }
-
         private void SetMousePosTimer()
         {
             Mouse.Capture(this);
@@ -142,6 +152,75 @@ namespace FishingContents
             );
         }
         #endregion
+
+        void LoadPoints(List<Point> points)
+        {
+            if (points == null)
+            {
+                Point left_top = new Point(0, 0);
+                Point right_bottom = new Point(0, 0);
+                Point click_pos = new Point(0, 0);
+                points.Add(left_top);
+                points.Add(right_bottom);
+                points.Add(click_pos);
+            }
+            screen_lefttop_x.Text = Convert.ToString(points[(int)PointList.LEFTTOP].X);
+            screen_lefttop_y.Text = Convert.ToString(points[(int)PointList.LEFTTOP].Y);
+            screen_rightbottom_x.Text = Convert.ToString(points[(int)PointList.RIGHTBOTTOM].X);
+            screen_rightbottom_y.Text = Convert.ToString(points[(int)PointList.RIGHTBOTTOM].Y);
+            txt_mouse_click_posX.Text = Convert.ToString(points[(int)PointList.CLICKPOS].X);
+            txt_mouse_click_posY.Text = Convert.ToString(points[(int)PointList.CLICKPOS].Y);
+        }
+        void ChangePoints()
+        {
+            if (!CheckEquals(Properties.Settings.Default.set_point[SavePoint], GetNowPoints()))
+            {
+                MessageBoxResult MsgRes = MessageBox.Show("변경 사항이 있습니다 저장하시겠습니까?", "Save Point", MessageBoxButton.YesNo);
+                if (MsgRes == MessageBoxResult.Yes)
+                {
+                    Properties.Settings.Default.set_point[SavePoint] = GetNowPoints();
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+        bool CheckEquals(List<Point> temp1, List<Point> temp2)
+        {
+            foreach(PointList list in Enum.GetValues(typeof(PointList)))
+            {
+                if (!temp1[(int)list].Equals(temp2[(int)list]))
+                    return false;
+            }
+            return true;
+        }
+        
+        List<Point> GetNowPoints()
+        {
+            List<Point> points = new List<Point>();
+            Point left_top = new Point(Convert.ToInt32(screen_lefttop_x.Text), Convert.ToInt32(screen_lefttop_y.Text));
+            Point right_bottom = new Point(Convert.ToInt32(screen_rightbottom_x.Text), Convert.ToInt32(screen_rightbottom_y.Text));
+            Point click_pos = new Point(Convert.ToInt32(txt_mouse_click_posX.Text), Convert.ToInt32(txt_mouse_click_posY.Text));
+
+            points.Add(left_top);
+            points.Add(right_bottom);
+            points.Add(click_pos);
+
+            return points;
+        }
+
+        private void mWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ChangePoints();
+            Properties.Settings.Default.save_point_num = SavePoint;
+            Properties.Settings.Default.Save();
+        }
+
+        private void RadioButton_Click(object sender, RoutedEventArgs e)
+        {
+            ChangePoints();
+            SavePoint = Convert.ToInt32((sender as RadioButton).Tag);
+            LoadPoints(Properties.Settings.Default.set_point[SavePoint]);
+            screen_lefttop_x.Focus();
+        }
     }
 
 

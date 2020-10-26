@@ -7,7 +7,8 @@
         xmlns:emgu="clr-namespace:Emgu.CV.UI;assembly=Emgu.CV.Platform.NetFramework"
         mc:Ignorable="d"
         x:Name="mWindow"
-        Title="Roo 자동 낚시" Height="227.565" Width="400">
+        Title="Roo 자동 낚시" Height="227.565" Width="400" Topmost="True"
+        Closing="mWindow_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50*" />
@@ -58,15 +59,25 @@
                              HorizontalContentAlignment="Center" VerticalAlignment="Center" Grid.Column="2"></TextBox>
                 </Grid>
             </StackPanel>
-            <CheckBox x:Name="isScreenShot" 
+            <Grid>
+                <GroupBox Header="Save point" Width="80" HorizontalAlignment="Left" FontSize="6" Height="27">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="4,0,4,-2">
+                        <RadioButton GroupName="SavePoint" Tag="0" Click="RadioButton_Click" IsTabStop="False" Name="radio_save_point" IsChecked="True"/>
+                        <RadioButton GroupName="SavePoint" Tag="1" Click="RadioButton_Click" IsTabStop="False"/>
+                        <RadioButton GroupName="SavePoint" Tag="2" Click="RadioButton_Click" IsTabStop="False"/>
+                        <RadioButton GroupName="SavePoint" Tag="3" Click="RadioButton_Click" IsTabStop="False"/>
+                    </StackPanel>
+                </GroupBox>
+                <CheckBox x:Name="isScreenShot" IsTabStop="False"
                       Content="AutoScreenShot" FontSize="9"
                       Margin="0,0,5,0"
                       VerticalContentAlignment="Center"
                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
-
-            <Label Name="label1" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1">마우스 위치:</Label>
+            </Grid>
+            
+            <Label Name="label1" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1">마우스 위치:</Label>
             <TextBox Name="txt_mouse_pos" FontSize="20" TextAlignment="Center" VerticalAlignment="Top" Grid.Row="2" IsEnabled="False">0, 0</TextBox>
-            <Label Name="label2" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="3">마우스 클릭 위치:</Label>
+            <Label Name="label2" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="3">마우스 클릭 위치:</Label>
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10*" />
